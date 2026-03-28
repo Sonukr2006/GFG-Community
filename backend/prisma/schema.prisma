@@ -42,6 +42,7 @@ model Member {
 
   event_registrations    EventRegistration[]
   workshop_registrations WorkshopRegistration[]
+  assigned_tasks          Task[] @relation("AssignedTasks")
 
   @@map("members")
 }
@@ -133,6 +134,23 @@ model ContactMessage {
   updated_at DateTime @updatedAt
 
   @@map("contact_messages")
+}
+
+model Task {
+  id                 Int      @id @default(autoincrement())
+  title              String
+  description        String
+  status             String   @default("pending")
+  due_date           DateTime?
+  assigned_member_id Int
+  created_by_role    String
+  created_by_id      Int
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+
+  assigned_member Member @relation("AssignedTasks", fields: [assigned_member_id], references: [id])
+
+  @@map("tasks")
 }
 
 model EventRegistration {

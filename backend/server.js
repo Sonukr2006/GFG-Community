@@ -19,6 +19,7 @@ const usersRoutes = require("./routes/usersRoutes");
 const statsRoutes = require("./routes/statsRoutes");
 const uploadsRoutes = require("./routes/uploadsRoutes");
 const contactRoutes = require("./routes/contactRoutes");
+const tasksRoutes = require("./routes/tasksRoutes");
 
 const app = express();
 
@@ -76,6 +77,7 @@ app.use("/api", usersRoutes);
 app.use("/api", statsRoutes);
 app.use("/api", uploadsRoutes);
 app.use("/api", contactRoutes);
+app.use("/api", tasksRoutes);
 
 const PORT = process.env.PORT || 4000;
 

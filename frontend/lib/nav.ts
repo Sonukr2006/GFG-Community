@@ -8,6 +8,7 @@ export const adminNav: SidebarItem[] = [
   { label: "Announcements", href: "/admin/announcements" },
   { label: "Resources", href: "/admin/resources" },
   { label: "Gallery", href: "/admin/gallery" },
+  { label: "Tasks", href: "/admin/tasks" },
   { label: "Contact Messages", href: "/admin/contact-messages" },
   { label: "Members", href: "/admin/members" },
   { label: "Leaders", href: "/admin/leaders" }
@@ -21,6 +22,7 @@ export const leaderNav: SidebarItem[] = [
   { label: "Announcements", href: "/leader/announcements" },
   { label: "Resources", href: "/leader/resources" },
   { label: "Gallery", href: "/leader/gallery" },
+  { label: "Tasks", href: "/leader/tasks" },
   { label: "Contact Messages", href: "/leader/contact-messages" }
 ];
 
@@ -30,5 +32,6 @@ export const memberNav: SidebarItem[] = [
   { label: "Workshops", href: "/member/workshops" },
   { label: "Resources", href: "/member/resources" },
   { label: "Announcements", href: "/member/announcements" },
+  { label: "Tasks", href: "/member/tasks" },
   { label: "Profile", href: "/member/profile" }
 ];

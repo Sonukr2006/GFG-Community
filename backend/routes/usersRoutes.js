@@ -11,7 +11,7 @@ const { authenticate, authorizeRoles } = require("../middleware/auth");
 
 const router = express.Router();
 
-router.get("/members", authenticate, authorizeRoles("admin"), getMembers);
+router.get("/members", authenticate, authorizeRoles("admin", "leader"), getMembers);
 router.post("/members", authenticate, authorizeRoles("admin"), createMember);
 router.delete("/members/:id", authenticate, authorizeRoles("admin"), deleteMember);
 

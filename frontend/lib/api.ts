@@ -242,6 +242,56 @@ export function deleteContactMessage(id: number) {
   });
 }
 
+export type TaskInput = {
+  title: string;
+  description: string;
+  status?: string;
+  due_date?: string;
+  assigned_member_id?: number | string;
+};
+
+export type TaskItem = TaskInput & {
+  id: number;
+  created_at?: string;
+  assigned_member?: { id: number; name: string; login_id: string };
+};
+
+export function getTasks(params: {
+  page: number;
+  limit: number;
+  search?: string;
+  status?: string;
+  member_id?: number | string;
+}) {
+  const query = new URLSearchParams();
+  query.set("page", String(params.page));
+  query.set("limit", String(params.limit));
+  if (params.search) query.set("search", params.search);
+  if (params.status && params.status !== "all") query.set("status", params.status);
+  if (params.member_id) query.set("member_id", String(params.member_id));
+  return apiJson<PaginatedResponse<TaskItem>>(`/api/tasks?${query.toString()}`);
+}
+
+export function createTask(payload: TaskInput) {
+  return apiJson<TaskItem>("/api/tasks", {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+}
+
+export function updateTask(id: number, payload: TaskInput) {
+  return apiJson<TaskItem>(`/api/tasks/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(payload)
+  });
+}
+
+export function deleteTask(id: number) {
+  return apiJson<{ message: string }>(`/api/tasks/${id}`, {
+    method: "DELETE"
+  });
+}
+
 export type GalleryItem = {
   id: number;
   title: string;
