@@ -221,6 +221,27 @@ export function deleteTeamMember(id: number) {
   });
 }
 
+export type ContactMessageItem = {
+  id: number;
+  name: string;
+  email: string;
+  message: string;
+  created_at: string;
+};
+
+export function getContactMessages(params: { page: number; limit: number }) {
+  const query = new URLSearchParams();
+  query.set("page", String(params.page));
+  query.set("limit", String(params.limit));
+  return apiJson<PaginatedResponse<ContactMessageItem>>(`/api/contact-messages?${query.toString()}`);
+}
+
+export function deleteContactMessage(id: number) {
+  return apiJson<{ message: string }>(`/api/contact-messages/${id}`, {
+    method: "DELETE"
+  });
+}
+
 export type GalleryItem = {
   id: number;
   title: string;

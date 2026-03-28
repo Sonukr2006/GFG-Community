@@ -29,7 +29,7 @@ export default function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-white/10 px-6 py-4 text-center text-xs text-slate-500">
-        © 2026 GFG Campus Community. Built with heart and clean code.
+        © 2026 GFG CGCU Campus Community. Built with heart and clean code.
       </div>
     </footer>
   );

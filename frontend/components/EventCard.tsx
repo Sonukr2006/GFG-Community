@@ -1,7 +1,12 @@
 "use client";
 
 import { formatDate } from "@/lib/utils";
-import Image from "next/image";
+const getImageSrc = (value?: string) => {
+  if (!value) return "";
+  if (value.startsWith("http://") || value.startsWith("https://")) return value;
+  const base = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
+  return `${base}${value.startsWith("/") ? "" : "/"}${value}`;
+};
 
 export default function EventCard({
   title,
@@ -22,7 +27,7 @@ export default function EventCard({
     <div className="card flex flex-col justify-between">
       {image_url ? (
         <div className="mb-4 overflow-hidden rounded-xl border border-white/10">
-          <Image src={image_url} alt={title} width={600} height={360} className="h-40 w-full object-cover" />
+          <img src={getImageSrc(image_url)} alt={title} className="h-40 w-full object-cover" />
         </div>
       ) : null}
       <div>

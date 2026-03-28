@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { getGallery, GalleryItem } from "@/lib/api";
 import { authHeaders, getApiBase } from "@/lib/auth";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function GalleryManager() {
   const [items, setItems] = useState<GalleryItem[]>([]);
@@ -12,6 +13,7 @@ export default function GalleryManager() {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<{ id: number; title: string } | null>(null);
 
   const fetchList = async () => {
     setLoading(true);
@@ -164,7 +166,7 @@ export default function GalleryManager() {
                 </div>
                 <button
                   className="rounded-full border border-rose-400/40 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-rose-300"
-                  onClick={() => handleDelete(item.id)}
+                  onClick={() => setConfirmDelete({ id: item.id, title: item.title })}
                 >
                   Delete
                 </button>
@@ -173,6 +175,19 @@ export default function GalleryManager() {
           ))}
         </div>
       </div>
+      <ConfirmDialog
+        open={Boolean(confirmDelete)}
+        title={confirmDelete ? `Delete image \"${confirmDelete.title}\"?` : "Delete image?"}
+        description="This action cannot be undone."
+        confirmText="Delete Image"
+        onCancel={() => setConfirmDelete(null)}
+        onConfirm={() => {
+          if (confirmDelete) {
+            handleDelete(confirmDelete.id);
+          }
+          setConfirmDelete(null);
+        }}
+      />
     </div>
   );
 }

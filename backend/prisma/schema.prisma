@@ -124,6 +124,17 @@ model Gallery {
   @@map("gallery")
 }
 
+model ContactMessage {
+  id         Int      @id @default(autoincrement())
+  name       String
+  email      String
+  message    String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("contact_messages")
+}
+
 model EventRegistration {
   id          Int      @id @default(autoincrement())
   title       String

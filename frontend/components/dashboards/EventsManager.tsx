@@ -10,6 +10,7 @@ import {
   updateEvent
 } from "@/lib/api";
 import { authHeaders, getApiBase } from "@/lib/auth";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 const emptyForm: EventInput = {
   title: "",
@@ -34,6 +35,12 @@ export default function EventsManager() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<{ id: number; title: string } | null>(null);
+  const getImageSrc = (value?: string | null) => {
+    if (!value) return "";
+    if (value.startsWith("http://") || value.startsWith("https://")) return value;
+    return `${getApiBase()}${value.startsWith("/") ? "" : "/"}${value}`;
+  };
 
   const totalPages = useMemo(() => Math.max(1, Math.ceil(total / limit)), [total, limit]);
 
@@ -280,10 +287,19 @@ export default function EventsManager() {
         <div className="mt-6 grid gap-4">
           {items.map((item) => (
             <div key={item.id} className="rounded-2xl border border-white/10 p-4">
-              <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                <div>
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div className="flex gap-4">
+                  {item.image_url ? (
+                    <img
+                      src={getImageSrc(item.image_url)}
+                      alt={item.title}
+                      className="h-20 w-28 rounded-xl object-cover"
+                    />
+                  ) : null}
+                  <div>
                   <h3 className="text-lg font-semibold">{item.title}</h3>
                   <p className="text-sm text-slate-400">{item.description}</p>
+                  </div>
                 </div>
                 <div className="flex gap-2">
                   <button
@@ -294,7 +310,7 @@ export default function EventsManager() {
                   </button>
                   <button
                     className="rounded-full border border-rose-400/40 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-rose-300"
-                    onClick={() => handleDelete(item.id)}
+                    onClick={() => setConfirmDelete({ id: item.id, title: item.title })}
                   >
                     Delete
                   </button>
@@ -329,6 +345,19 @@ export default function EventsManager() {
           </div>
         </div>
       </div>
+      <ConfirmDialog
+        open={Boolean(confirmDelete)}
+        title={confirmDelete ? `Delete event "${confirmDelete.title}"?` : "Delete event?"}
+        description="This action cannot be undone."
+        confirmText="Delete Event"
+        onCancel={() => setConfirmDelete(null)}
+        onConfirm={() => {
+          if (confirmDelete) {
+            handleDelete(confirmDelete.id);
+          }
+          setConfirmDelete(null);
+        }}
+      />
     </div>
   );
 }

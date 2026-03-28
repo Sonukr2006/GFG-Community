@@ -9,6 +9,7 @@ import {
   AnnouncementItem,
   updateAnnouncement
 } from "@/lib/api";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 const emptyForm: AnnouncementInput = {
   title: "",
@@ -21,6 +22,7 @@ export default function AnnouncementsManager() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<{ id: number; title: string } | null>(null);
 
   const fetchList = async () => {
     setLoading(true);
@@ -142,11 +144,17 @@ export default function AnnouncementsManager() {
         ) : null}
         <div className="mt-6 grid gap-4">
           {items.map((item) => (
-            <div key={item.id} className="rounded-2xl border border-white/10 p-4">
+            <div
+              key={item.id}
+              className="rounded-2xl border border-amber-400/30 bg-gradient-to-br from-rose-500/10 via-amber-400/10 to-emerald-500/10 p-4"
+            >
               <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <div>
+                  <span className="inline-flex items-center rounded-full bg-gradient-to-r from-rose-400/40 via-amber-300/40 to-emerald-400/40 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-amber-100">
+                    Important
+                  </span>
                   <h3 className="text-lg font-semibold">{item.title}</h3>
-                  <p className="text-sm text-slate-400">{item.description}</p>
+                  <p className="text-sm text-slate-200/80">{item.description}</p>
                 </div>
                 <div className="flex gap-2">
                   <button
@@ -157,7 +165,7 @@ export default function AnnouncementsManager() {
                   </button>
                   <button
                     className="rounded-full border border-rose-400/40 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-rose-300"
-                    onClick={() => handleDelete(item.id)}
+                    onClick={() => setConfirmDelete({ id: item.id, title: item.title })}
                   >
                     Delete
                   </button>
@@ -167,6 +175,19 @@ export default function AnnouncementsManager() {
           ))}
         </div>
       </div>
+      <ConfirmDialog
+        open={Boolean(confirmDelete)}
+        title={confirmDelete ? `Delete announcement \"${confirmDelete.title}\"?` : "Delete announcement?"}
+        description="This action cannot be undone."
+        confirmText="Delete Announcement"
+        onCancel={() => setConfirmDelete(null)}
+        onConfirm={() => {
+          if (confirmDelete) {
+            handleDelete(confirmDelete.id);
+          }
+          setConfirmDelete(null);
+        }}
+      />
     </div>
   );
 }

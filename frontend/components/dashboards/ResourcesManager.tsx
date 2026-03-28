@@ -9,6 +9,7 @@ import {
   ResourceItem,
   updateResource
 } from "@/lib/api";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 const emptyForm: ResourceInput = {
   title: "",
@@ -28,6 +29,7 @@ export default function ResourcesManager() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<{ id: number; title: string } | null>(null);
 
   const totalPages = useMemo(() => Math.max(1, Math.ceil(total / limit)), [total, limit]);
 
@@ -220,7 +222,7 @@ export default function ResourcesManager() {
                   </button>
                   <button
                     className="rounded-full border border-rose-400/40 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-rose-300"
-                    onClick={() => handleDelete(item.id)}
+                    onClick={() => setConfirmDelete({ id: item.id, title: item.title })}
                   >
                     Delete
                   </button>
@@ -252,6 +254,19 @@ export default function ResourcesManager() {
           </div>
         </div>
       </div>
+      <ConfirmDialog
+        open={Boolean(confirmDelete)}
+        title={confirmDelete ? `Delete resource \"${confirmDelete.title}\"?` : "Delete resource?"}
+        description="This action cannot be undone."
+        confirmText="Delete Resource"
+        onCancel={() => setConfirmDelete(null)}
+        onConfirm={() => {
+          if (confirmDelete) {
+            handleDelete(confirmDelete.id);
+          }
+          setConfirmDelete(null);
+        }}
+      />
     </div>
   );
 }

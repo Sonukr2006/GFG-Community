@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createMember, deleteMember, getMembers, MemberInput, MemberItem } from "@/lib/api";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 const emptyForm: MemberInput = {
   login_id: "",
@@ -15,6 +16,7 @@ export default function MembersManager() {
   const [form, setForm] = useState<MemberInput>(emptyForm);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<{ id: number; name: string } | null>(null);
 
   const fetchList = async () => {
     setLoading(true);
@@ -128,7 +130,7 @@ export default function MembersManager() {
                 </div>
                 <button
                   className="rounded-full border border-rose-400/40 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-rose-300"
-                  onClick={() => handleDelete(item.id)}
+                  onClick={() => setConfirmDelete({ id: item.id, name: item.name })}
                 >
                   Delete
                 </button>
@@ -137,6 +139,19 @@ export default function MembersManager() {
           ))}
         </div>
       </div>
+      <ConfirmDialog
+        open={Boolean(confirmDelete)}
+        title={confirmDelete ? `Delete member \"${confirmDelete.name}\"?` : "Delete member?"}
+        description="This action cannot be undone."
+        confirmText="Delete Member"
+        onCancel={() => setConfirmDelete(null)}
+        onConfirm={() => {
+          if (confirmDelete) {
+            handleDelete(confirmDelete.id);
+          }
+          setConfirmDelete(null);
+        }}
+      />
     </div>
   );
 }

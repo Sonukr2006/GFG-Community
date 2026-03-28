@@ -11,6 +11,21 @@ async function fetchJson<T>(path: string): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+async function postJson<T>(path: string, body: unknown): Promise<T> {
+  const res = await fetch(`${getPublicApiBase()}${path}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.message || `Request failed: ${res.status}`);
+  }
+  return res.json() as Promise<T>;
+}
+
 export type PaginatedResponse<T> = {
   data: T[];
   meta: { total: number; page: number; limit: number };
@@ -74,6 +89,12 @@ export type PublicStats = {
   announcements: number;
 };
 
+export type ContactMessageInput = {
+  name: string;
+  email: string;
+  message: string;
+};
+
 export const getPublicEvents = async (limit = 12, page = 1) => {
   return fetchJson<PaginatedResponse<PublicEvent>>(`/api/events?page=${page}&limit=${limit}`);
 };
@@ -100,4 +121,8 @@ export const getPublicGallery = async () => {
 
 export const getPublicStats = async () => {
   return fetchJson<PublicStats>("/api/stats");
+};
+
+export const submitContactMessage = async (payload: ContactMessageInput) => {
+  return postJson<{ id: number }>("/api/contact", payload);
 };

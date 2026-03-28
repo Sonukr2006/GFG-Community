@@ -9,6 +9,8 @@ import {
   TeamMemberItem,
   updateTeamMember
 } from "@/lib/api";
+import { authHeaders, getApiBase } from "@/lib/auth";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 const emptyForm = {
   name: "",
@@ -22,9 +24,12 @@ export default function TeamMembersManager() {
   const [items, setItems] = useState<TeamMemberItem[]>([]);
   const [form, setForm] = useState<TeamMemberInput>(emptyForm);
   const [skillsText, setSkillsText] = useState("");
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<{ id: number; name: string } | null>(null);
 
   const fetchList = async () => {
     setLoading(true);
@@ -47,14 +52,44 @@ export default function TeamMembersManager() {
     setForm(emptyForm);
     setSkillsText("");
     setEditingId(null);
+    setPhotoFile(null);
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
 
+    let photoUrl = form.photo_url;
+    if (photoFile) {
+      setUploading(true);
+      try {
+        const uploadData = new FormData();
+        uploadData.append("image", photoFile);
+        const res = await fetch(`${getApiBase()}/api/uploads`, {
+          method: "POST",
+          headers: {
+            ...authHeaders()
+          },
+          body: uploadData
+        });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.message || "Photo upload failed");
+        }
+        const data = await res.json();
+        photoUrl = data.url;
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Photo upload failed");
+        setUploading(false);
+        return;
+      } finally {
+        setUploading(false);
+      }
+    }
+
     const payload = {
       ...form,
+      photo_url: photoUrl || "",
       skills: skillsText
         .split(",")
         .map((skill) => skill.trim())
@@ -100,6 +135,7 @@ export default function TeamMembersManager() {
       skills: item.skills,
       photo_url: item.photo_url || ""
     });
+    setPhotoFile(null);
     setSkillsText(item.skills?.join(", ") || "");
   };
 
@@ -139,12 +175,18 @@ export default function TeamMembersManager() {
             value={skillsText}
             onChange={(event) => setSkillsText(event.target.value)}
           />
-          <input
-            className="input"
-            placeholder="Photo URL"
-            value={form.photo_url}
-            onChange={(event) => setForm({ ...form, photo_url: event.target.value })}
-          />
+          <div className="grid gap-2 md:col-span-2">
+            <label className="text-xs uppercase tracking-widest text-slate-400">Photo</label>
+            <input
+              type="file"
+              accept="image/*"
+              className="input"
+              onChange={(event) => setPhotoFile(event.target.files?.[0] || null)}
+            />
+            {form.photo_url ? (
+              <p className="text-xs text-slate-400">Existing photo will be replaced if you upload a new one.</p>
+            ) : null}
+          </div>
           <textarea
             className="input md:col-span-2 min-h-[120px]"
             placeholder="Description"
@@ -155,9 +197,10 @@ export default function TeamMembersManager() {
           <div className="flex flex-wrap gap-3">
             <button
               type="submit"
+              disabled={uploading}
               className="rounded-full bg-neon-500 px-5 py-2 text-xs font-semibold uppercase tracking-widest text-ink-900"
             >
-              {editingId ? "Save Changes" : "Add Member"}
+              {uploading ? "Uploading..." : editingId ? "Save Changes" : "Add Member"}
             </button>
             {editingId ? (
               <button
@@ -196,7 +239,7 @@ export default function TeamMembersManager() {
                   </button>
                   <button
                     className="rounded-full border border-rose-400/40 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-rose-300"
-                    onClick={() => handleDelete(item.id)}
+                    onClick={() => setConfirmDelete({ id: item.id, name: item.name })}
                   >
                     Delete
                   </button>
@@ -216,6 +259,19 @@ export default function TeamMembersManager() {
           ))}
         </div>
       </div>
+      <ConfirmDialog
+        open={Boolean(confirmDelete)}
+        title={confirmDelete ? `Delete member \"${confirmDelete.name}\"?` : "Delete member?"}
+        description="This action cannot be undone."
+        confirmText="Delete Member"
+        onCancel={() => setConfirmDelete(null)}
+        onConfirm={() => {
+          if (confirmDelete) {
+            handleDelete(confirmDelete.id);
+          }
+          setConfirmDelete(null);
+        }}
+      />
     </div>
   );
 }

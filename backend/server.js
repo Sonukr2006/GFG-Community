@@ -18,6 +18,7 @@ const registrationsRoutes = require("./routes/registrationsRoutes");
 const usersRoutes = require("./routes/usersRoutes");
 const statsRoutes = require("./routes/statsRoutes");
 const uploadsRoutes = require("./routes/uploadsRoutes");
+const contactRoutes = require("./routes/contactRoutes");
 
 const app = express();
 
@@ -74,6 +75,7 @@ app.use("/api", registrationsRoutes);
 app.use("/api", usersRoutes);
 app.use("/api", statsRoutes);
 app.use("/api", uploadsRoutes);
+app.use("/api", contactRoutes);
 
 const PORT = process.env.PORT || 4000;
 

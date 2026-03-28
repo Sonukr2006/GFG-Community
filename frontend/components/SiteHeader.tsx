@@ -21,7 +21,7 @@ export default function SiteHeader() {
           </span>
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-300">Community</p>
-            <p className="text-xs text-slate-400">Campus Hub</p>
+            <p className="text-xs text-slate-400">CGCU Campus Hub</p>
           </div>
         </Link>
         <nav className="hidden items-center gap-6 text-sm font-semibold text-slate-300 md:flex">

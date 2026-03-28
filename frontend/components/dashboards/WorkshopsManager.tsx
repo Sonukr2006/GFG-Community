@@ -9,6 +9,7 @@ import {
   WorkshopInput,
   WorkshopItem
 } from "@/lib/api";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 const emptyForm: WorkshopInput = {
   title: "",
@@ -29,6 +30,7 @@ export default function WorkshopsManager() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<{ id: number; title: string } | null>(null);
 
   const totalPages = useMemo(() => Math.max(1, Math.ceil(total / limit)), [total, limit]);
 
@@ -225,7 +227,7 @@ export default function WorkshopsManager() {
                   </button>
                   <button
                     className="rounded-full border border-rose-400/40 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-rose-300"
-                    onClick={() => handleDelete(item.id)}
+                    onClick={() => setConfirmDelete({ id: item.id, title: item.title })}
                   >
                     Delete
                   </button>
@@ -260,6 +262,19 @@ export default function WorkshopsManager() {
           </div>
         </div>
       </div>
+      <ConfirmDialog
+        open={Boolean(confirmDelete)}
+        title={confirmDelete ? `Delete workshop \"${confirmDelete.title}\"?` : "Delete workshop?"}
+        description="This action cannot be undone."
+        confirmText="Delete Workshop"
+        onCancel={() => setConfirmDelete(null)}
+        onConfirm={() => {
+          if (confirmDelete) {
+            handleDelete(confirmDelete.id);
+          }
+          setConfirmDelete(null);
+        }}
+      />
     </div>
   );
 }
