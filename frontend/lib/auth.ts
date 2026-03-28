@@ -26,7 +26,7 @@ export function clearSession() {
   document.cookie = "gfg_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
 }
 
-export function authHeaders() {
+export function authHeaders(): Record<string, string> {
   const token = getToken();
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
