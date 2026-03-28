@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const prisma = require("../config/prisma");
 
 const createUser = async (table, req, res) => {
-  const { login_id, name, description, password } = req.body;
+  const { login_id, name, description, password, team_role } = req.body;
 
   if (!login_id || !name || !password) {
     return res.status(400).json({ message: "login_id, name, and password are required" });
@@ -10,7 +10,18 @@ const createUser = async (table, req, res) => {
 
   try {
     const password_hash = await bcrypt.hash(password, 10);
-    const data = { login_id, name, description: description || "", password_hash };
+    const data = {
+      login_id,
+      name,
+      description: description || "",
+      password_hash
+    };
+    if (table === "members") {
+      data.team_role = team_role || "General";
+    }
+    if (table === "leaders") {
+      data.team_role = team_role || "General";
+    }
     let created = null;
     if (table === "members") {
       created = await prisma.member.create({ data });
@@ -23,6 +34,7 @@ const createUser = async (table, req, res) => {
       login_id: created.login_id,
       name: created.name,
       description: created.description,
+      team_role: created.team_role,
       created_at: created.created_at
     });
   } catch (err) {
@@ -35,12 +47,12 @@ const listUsers = async (table, req, res) => {
     let users = [];
     if (table === "members") {
       users = await prisma.member.findMany({
-        select: { id: true, login_id: true, name: true, description: true, created_at: true }
+        select: { id: true, login_id: true, name: true, description: true, team_role: true, created_at: true }
       });
     }
     if (table === "leaders") {
       users = await prisma.leader.findMany({
-        select: { id: true, login_id: true, name: true, description: true, created_at: true }
+        select: { id: true, login_id: true, name: true, description: true, team_role: true, created_at: true }
       });
     }
     return res.json(users);

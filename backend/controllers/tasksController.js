@@ -66,6 +66,24 @@ const createTask = async (req, res) => {
   }
 
   try {
+    if (assigned_member_id === "all") {
+      const members = await prisma.member.findMany({ select: { id: true } });
+      if (members.length === 0) {
+        return res.status(400).json({ message: "No members available to assign" });
+      }
+      const data = members.map((member) => ({
+        title,
+        description,
+        status: status || "pending",
+        due_date: parsedDue,
+        assigned_member_id: member.id,
+        created_by_role: role,
+        created_by_id: id
+      }));
+      const result = await prisma.task.createMany({ data });
+      return res.status(201).json({ message: "Tasks assigned to all members", count: result.count });
+    }
+
     const created = await prisma.task.create({
       data: {
         title,

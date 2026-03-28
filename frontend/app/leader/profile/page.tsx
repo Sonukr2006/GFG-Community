@@ -1,12 +1,12 @@
 import DashboardShell from "@/components/DashboardShell";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { memberNav } from "@/lib/nav";
+import { leaderNav } from "@/lib/nav";
 import ProfileForm from "@/components/ProfileForm";
 
-export default function MemberProfilePage() {
+export default function LeaderProfilePage() {
   return (
-    <ProtectedRoute role="member">
-      <DashboardShell title="Member" items={memberNav}>
+    <ProtectedRoute role="leader">
+      <DashboardShell title="Leader" items={leaderNav}>
         <ProfileForm />
       </DashboardShell>
     </ProtectedRoute>

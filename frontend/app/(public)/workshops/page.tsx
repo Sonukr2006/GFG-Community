@@ -9,6 +9,7 @@ export default async function WorkshopsPage() {
     description: string;
     date: string;
     level: string;
+    image_url?: string;
   }> = [];
 
   try {
@@ -18,7 +19,8 @@ export default async function WorkshopsPage() {
       title: item.title,
       description: item.description,
       date: item.date,
-      level: item.level || "Community"
+      level: item.level || "Community",
+      image_url: item.image_url || undefined
     }));
   } catch (err) {
     workshops = [];

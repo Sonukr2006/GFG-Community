@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import Sidebar, { SidebarItem } from "@/components/Sidebar";
 import UserSummary from "@/components/UserSummary";
+import ProfileSidebar from "@/components/ProfileSidebar";
 
 export default function DashboardShell({
   title,
@@ -16,9 +17,14 @@ export default function DashboardShell({
       <div className="flex">
         <Sidebar title={title} items={items} />
         <main className="flex-1 px-6 py-8">
-          <div className="mx-auto max-w-5xl">
-            <div className="mb-6 rounded-2xl border border-white/10 bg-white/5 p-4">
-              <UserSummary />
+          <div className="mx-auto max-w-6xl">
+            <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-stretch">
+              <div className="flex-1 rounded-2xl border border-white/10 bg-white/5 p-4">
+                <UserSummary />
+              </div>
+              <div className="lg:w-72">
+                <ProfileSidebar />
+              </div>
             </div>
             {children}
           </div>

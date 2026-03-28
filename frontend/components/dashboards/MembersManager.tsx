@@ -8,7 +8,8 @@ const emptyForm: MemberInput = {
   login_id: "",
   name: "",
   description: "",
-  password: ""
+  password: "",
+  team_role: "Technical"
 };
 
 export default function MembersManager() {
@@ -16,6 +17,7 @@ export default function MembersManager() {
   const [form, setForm] = useState<MemberInput>(emptyForm);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [teamDropdownOpen, setTeamDropdownOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<{ id: number; name: string } | null>(null);
 
   const fetchList = async () => {
@@ -45,6 +47,7 @@ export default function MembersManager() {
       login_id: form.login_id,
       name: form.name,
       description: form.description || "",
+      team_role: form.team_role || "General",
       created_at: new Date().toISOString()
     };
 
@@ -96,6 +99,42 @@ export default function MembersManager() {
             value={form.description}
             onChange={(event) => setForm({ ...form, description: event.target.value })}
           />
+          <div className="relative">
+            <label className="text-xs uppercase tracking-widest text-slate-400">Team Role</label>
+            <button
+              type="button"
+              className="input mt-2 flex w-full items-center justify-between bg-ink-900 text-slate-200"
+              onClick={() => setTeamDropdownOpen((prev) => !prev)}
+            >
+              <span>{form.team_role || "Select team"}</span>
+              <span className="text-xs text-slate-400">▼</span>
+            </button>
+            {teamDropdownOpen ? (
+              <div className="absolute left-0 right-0 z-20 mt-2 rounded-2xl border border-white/10 bg-ink-900/95 p-2 shadow-2xl backdrop-blur">
+                {[
+                  "Technical",
+                  "Management",
+                  "PR",
+                  "Design",
+                  "Social Media",
+                  "General"
+                ].map((role) => (
+                  <button
+                    key={role}
+                    type="button"
+                    className="w-full rounded-xl px-3 py-2 text-left text-sm text-slate-200 transition hover:bg-white/10"
+                    onMouseDown={(event) => {
+                      event.preventDefault();
+                      setForm({ ...form, team_role: role });
+                      setTeamDropdownOpen(false);
+                    }}
+                  >
+                    {role === "PR" ? "PR Team" : role === "General" ? "General" : `${role} Team`}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
           <input
             type="password"
             className="input"
@@ -127,6 +166,11 @@ export default function MembersManager() {
                 <div>
                   <h3 className="text-lg font-semibold">{item.name}</h3>
                   <p className="text-sm text-slate-400">{item.login_id}</p>
+                  {item.team_role ? (
+                    <p className="mt-1 text-xs uppercase tracking-widest text-neon-300/80">
+                      {item.team_role}
+                    </p>
+                  ) : null}
                 </div>
                 <button
                   className="rounded-full border border-rose-400/40 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-rose-300"

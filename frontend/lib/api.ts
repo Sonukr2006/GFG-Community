@@ -75,6 +75,7 @@ export type WorkshopInput = {
   date: string;
   level?: string;
   location?: string;
+  image_url?: string;
 };
 
 export type WorkshopItem = WorkshopInput & { id: number };
@@ -273,7 +274,7 @@ export function getTasks(params: {
 }
 
 export function createTask(payload: TaskInput) {
-  return apiJson<TaskItem>("/api/tasks", {
+  return apiJson<TaskItem | { message: string; count: number }>("/api/tasks", {
     method: "POST",
     body: JSON.stringify(payload)
   });
@@ -308,6 +309,7 @@ export type MemberInput = {
   name: string;
   description?: string;
   password: string;
+  team_role?: string;
 };
 
 export type MemberItem = {
@@ -315,6 +317,16 @@ export type MemberItem = {
   login_id: string;
   name: string;
   description: string;
+  team_role?: string;
+  profile_photo_url?: string;
+  email?: string;
+  phone?: string;
+  branch?: string;
+  year?: string;
+  college?: string;
+  skills?: string[];
+  bio?: string;
+  social_links?: string;
   created_at: string;
 };
 
@@ -324,6 +336,43 @@ export type CurrentUser = MemberItem & {
 
 export function getCurrentUser() {
   return apiJson<CurrentUser>("/api/me");
+}
+
+export type UpdateProfileInput = {
+  name: string;
+  description?: string;
+  team_role?: string;
+  profile_photo_url?: string;
+  email?: string;
+  phone?: string;
+  branch?: string;
+  year?: string;
+  college?: string;
+  skills?: string[];
+  bio?: string;
+  social_links?: string;
+};
+
+export function updateCurrentUser(payload: UpdateProfileInput) {
+  return apiJson<CurrentUser>("/api/me", {
+    method: "PUT",
+    body: JSON.stringify(payload)
+  });
+}
+
+export function updatePassword(payload: { current_password: string; new_password: string }) {
+  return apiJson<{ message: string }>("/api/me/password", {
+    method: "PUT",
+    body: JSON.stringify(payload)
+  });
+}
+
+export type ProfileItem = MemberItem & {
+  team_role?: string;
+};
+
+export function getProfiles(role: "admins" | "leaders" | "members") {
+  return apiJson<ProfileItem[]>(`/api/profiles?role=${role}`);
 }
 
 export function getMembers() {

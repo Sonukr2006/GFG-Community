@@ -10,18 +10,22 @@ import {
   WorkshopItem
 } from "@/lib/api";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import { authHeaders, getApiBase } from "@/lib/auth";
 
 const emptyForm: WorkshopInput = {
   title: "",
   description: "",
   date: "",
   level: "",
-  location: ""
+  location: "",
+  image_url: ""
 };
 
 export default function WorkshopsManager() {
   const [items, setItems] = useState<WorkshopItem[]>([]);
   const [form, setForm] = useState<WorkshopInput>(emptyForm);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [search, setSearch] = useState("");
   const [level, setLevel] = useState("all");
@@ -54,6 +58,7 @@ export default function WorkshopsManager() {
 
   const resetForm = () => {
     setForm(emptyForm);
+    setImageFile(null);
     setEditingId(null);
   };
 
@@ -61,14 +66,47 @@ export default function WorkshopsManager() {
     event.preventDefault();
     setError(null);
 
+    let imageUrl = form.image_url;
+    if (imageFile) {
+      setUploading(true);
+      try {
+        const uploadData = new FormData();
+        uploadData.append("image", imageFile);
+        const res = await fetch(`${getApiBase()}/api/uploads`, {
+          method: "POST",
+          headers: {
+            ...authHeaders()
+          },
+          body: uploadData
+        });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.message || "Image upload failed");
+        }
+        const data = await res.json();
+        imageUrl = data.url;
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Image upload failed");
+        setUploading(false);
+        return;
+      } finally {
+        setUploading(false);
+      }
+    }
+
+    const payload: WorkshopInput = {
+      ...form,
+      image_url: imageUrl || undefined
+    };
+
     if (editingId) {
       const previous = items.find((item) => item.id === editingId);
       if (!previous) return;
-      const optimistic = { ...previous, ...form } as WorkshopItem;
+      const optimistic = { ...previous, ...payload } as WorkshopItem;
       setItems((prev) => prev.map((item) => (item.id === editingId ? optimistic : item)));
       resetForm();
       try {
-        const updated = await updateWorkshop(editingId, form);
+        const updated = await updateWorkshop(editingId, payload);
         setItems((prev) => prev.map((item) => (item.id === editingId ? updated : item)));
       } catch (err) {
         setItems((prev) => prev.map((item) => (item.id === editingId ? previous : item)));
@@ -78,13 +116,13 @@ export default function WorkshopsManager() {
     }
 
     const tempId = Date.now();
-    const optimistic = { id: tempId, ...form } as WorkshopItem;
+    const optimistic = { id: tempId, ...payload } as WorkshopItem;
     setItems((prev) => [optimistic, ...prev].slice(0, limit));
     setTotal((prev) => prev + 1);
     resetForm();
 
     try {
-      const created = await createWorkshop(form);
+      const created = await createWorkshop(payload);
       setItems((prev) => prev.map((item) => (item.id === tempId ? created : item)));
     } catch (err) {
       setItems((prev) => prev.filter((item) => item.id !== tempId));
@@ -100,7 +138,8 @@ export default function WorkshopsManager() {
       description: item.description,
       date: item.date,
       level: item.level || "",
-      location: item.location || ""
+      location: item.location || "",
+      image_url: item.image_url || ""
     });
   };
 
@@ -155,12 +194,25 @@ export default function WorkshopsManager() {
             onChange={(event) => setForm({ ...form, description: event.target.value })}
             required
           />
+          <div className="md:col-span-2 grid gap-2">
+            <label className="text-xs uppercase tracking-widest text-slate-400">Workshop Image</label>
+            <input
+              type="file"
+              accept="image/*"
+              className="input"
+              onChange={(event) => setImageFile(event.target.files?.[0] || null)}
+            />
+            {form.image_url ? (
+              <p className="text-xs text-slate-400">Existing image will be replaced if you upload a new one.</p>
+            ) : null}
+          </div>
           <div className="flex flex-wrap gap-3">
             <button
               type="submit"
+              disabled={uploading}
               className="rounded-full bg-neon-500 px-5 py-2 text-xs font-semibold uppercase tracking-widest text-ink-900"
             >
-              {editingId ? "Save Changes" : "Create Workshop"}
+              {uploading ? "Uploading..." : editingId ? "Save Changes" : "Create Workshop"}
             </button>
             {editingId ? (
               <button
@@ -236,6 +288,13 @@ export default function WorkshopsManager() {
               <div className="mt-3 text-xs text-slate-400">
                 {item.date} {item.level ? `• ${item.level}` : ""}
               </div>
+              {item.image_url ? (
+                <img
+                  src={item.image_url}
+                  alt={item.title}
+                  className="mt-4 h-32 w-full rounded-xl object-cover"
+                />
+              ) : null}
             </div>
           ))}
         </div>

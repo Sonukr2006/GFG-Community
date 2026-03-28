@@ -2,6 +2,7 @@ import { SidebarItem } from "@/components/Sidebar";
 
 export const adminNav: SidebarItem[] = [
   { label: "Dashboard", href: "/admin" },
+  { label: "Profiles", href: "/admin/profiles" },
   { label: "Events", href: "/admin/events" },
   { label: "Workshops", href: "/admin/workshops" },
   { label: "Team Members", href: "/admin/team-members" },
@@ -32,6 +33,5 @@ export const memberNav: SidebarItem[] = [
   { label: "Workshops", href: "/member/workshops" },
   { label: "Resources", href: "/member/resources" },
   { label: "Announcements", href: "/member/announcements" },
-  { label: "Tasks", href: "/member/tasks" },
-  { label: "Profile", href: "/member/profile" }
+  { label: "Tasks", href: "/member/tasks" }
 ];

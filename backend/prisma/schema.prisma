@@ -12,6 +12,15 @@ model Admin {
   login_id      String   @unique
   name          String
   description   String   @default("")
+  profile_photo_url String? @default("")
+  email         String?  @default("")
+  phone         String?  @default("")
+  branch        String?  @default("")
+  year          String?  @default("")
+  college       String?  @default("")
+  skills        String[] @default([])
+  bio           String?  @default("")
+  social_links  String?  @default("")
   password_hash String
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
@@ -24,6 +33,16 @@ model Leader {
   login_id      String   @unique
   name          String
   description   String   @default("")
+  team_role     String   @default("General")
+  profile_photo_url String? @default("")
+  email         String?  @default("")
+  phone         String?  @default("")
+  branch        String?  @default("")
+  year          String?  @default("")
+  college       String?  @default("")
+  skills        String[] @default([])
+  bio           String?  @default("")
+  social_links  String?  @default("")
   password_hash String
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
@@ -36,6 +55,16 @@ model Member {
   login_id      String   @unique
   name          String
   description   String   @default("")
+  team_role     String   @default("General")
+  profile_photo_url String? @default("")
+  email         String?  @default("")
+  phone         String?  @default("")
+  branch        String?  @default("")
+  year          String?  @default("")
+  college       String?  @default("")
+  skills        String[] @default([])
+  bio           String?  @default("")
+  social_links  String?  @default("")
   password_hash String
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
@@ -71,6 +100,7 @@ model Workshop {
   date        DateTime
   level       String?
   location    String?
+  image_url   String?
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 

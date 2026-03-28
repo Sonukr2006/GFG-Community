@@ -49,6 +49,7 @@ export type PublicWorkshop = {
   date: string;
   level?: string | null;
   location?: string | null;
+  image_url?: string | null;
 };
 
 export type PublicAnnouncement = {

@@ -4,15 +4,22 @@ export default function WorkshopCard({
   title,
   description,
   date,
-  level
+  level,
+  image_url
 }: {
   title: string;
   description: string;
   date: string;
   level: string;
+  image_url?: string;
 }) {
   return (
     <div className="card">
+      {image_url ? (
+        <div className="mb-4 overflow-hidden rounded-xl border border-white/10">
+          <img src={image_url} alt={title} className="h-40 w-full object-cover" />
+        </div>
+      ) : null}
       <div className="flex items-center justify-between">
         <span className="badge bg-white/5 text-slate-300">{level}</span>
         <span className="text-xs text-slate-400">{formatDate(date)}</span>

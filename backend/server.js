@@ -20,6 +20,7 @@ const statsRoutes = require("./routes/statsRoutes");
 const uploadsRoutes = require("./routes/uploadsRoutes");
 const contactRoutes = require("./routes/contactRoutes");
 const tasksRoutes = require("./routes/tasksRoutes");
+const profilesRoutes = require("./routes/profilesRoutes");
 
 const app = express();
 
@@ -78,6 +79,7 @@ app.use("/api", statsRoutes);
 app.use("/api", uploadsRoutes);
 app.use("/api", contactRoutes);
 app.use("/api", tasksRoutes);
+app.use("/api", profilesRoutes);
 
 const PORT = process.env.PORT || 4000;
 

@@ -40,7 +40,7 @@ const getWorkshops = async (req, res) => {
 };
 
 const createWorkshop = async (req, res) => {
-  const { title, description, date, level, location } = req.body;
+  const { title, description, date, level, location, image_url } = req.body;
 
   try {
     const created = await prisma.workshop.create({
@@ -49,7 +49,8 @@ const createWorkshop = async (req, res) => {
         description,
         date: toDate(date),
         level: level || null,
-        location: location || null
+        location: location || null,
+        image_url: image_url || null
       }
     });
     return res.status(201).json(created);
@@ -60,7 +61,7 @@ const createWorkshop = async (req, res) => {
 
 const updateWorkshop = async (req, res) => {
   const { id } = req.params;
-  const { title, description, date, level, location } = req.body;
+  const { title, description, date, level, location, image_url } = req.body;
 
   try {
     const updated = await prisma.workshop.update({
@@ -70,7 +71,8 @@ const updateWorkshop = async (req, res) => {
         description,
         date: toDate(date),
         level: level || null,
-        location: location || null
+        location: location || null,
+        image_url: image_url || null
       }
     });
     return res.json(updated);
