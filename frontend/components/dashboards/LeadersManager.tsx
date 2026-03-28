@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { createLeader, deleteLeader, getLeaders, MemberInput, MemberItem } from "@/lib/api";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import Modal from "@/components/Modal";
+import LeaderProfileView from "@/components/LeaderProfileView";
 
 const emptyForm: MemberInput = {
   login_id: "",
@@ -19,6 +22,7 @@ export default function LeadersManager() {
   const [error, setError] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<{ id: number; name: string } | null>(null);
   const [teamDropdownOpen, setTeamDropdownOpen] = useState(false);
+  const [profileId, setProfileId] = useState<number | null>(null);
 
   const fetchList = async () => {
     setLoading(true);
@@ -172,12 +176,24 @@ export default function LeadersManager() {
                     </p>
                   ) : null}
                 </div>
-                <button
-                  className="rounded-full border border-rose-400/40 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-rose-300"
-                  onClick={() => setConfirmDelete({ id: item.id, name: item.name })}
-                >
-                  Delete
-                </button>
+                <div className="flex flex-wrap gap-2">
+                  <Link
+                    href={`/admin/leaders/${item.id}`}
+                    className="rounded-full border border-white/15 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white"
+                    onClick={(event) => {
+                      event.preventDefault();
+                      setProfileId(item.id);
+                    }}
+                  >
+                    Profile
+                  </Link>
+                  <button
+                    className="rounded-full border border-rose-400/40 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-rose-300"
+                    onClick={() => setConfirmDelete({ id: item.id, name: item.name })}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -196,6 +212,11 @@ export default function LeadersManager() {
           setConfirmDelete(null);
         }}
       />
+      <Modal open={profileId !== null} onClose={() => setProfileId(null)}>
+        {profileId !== null ? (
+          <LeaderProfileView memberId={profileId} showBack={false} title="Leader Profile" />
+        ) : null}
+      </Modal>
     </div>
   );
 }

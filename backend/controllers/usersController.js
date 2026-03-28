@@ -77,6 +77,68 @@ const deleteUser = async (table, req, res) => {
 };
 
 module.exports = {
+  getMemberById: async (req, res) => {
+    const { id } = req.params;
+    try {
+      const member = await prisma.member.findUnique({
+        where: { id: Number(id) },
+        select: {
+          id: true,
+          login_id: true,
+          name: true,
+          description: true,
+          team_role: true,
+          profile_photo_url: true,
+          email: true,
+          phone: true,
+          branch: true,
+          year: true,
+          college: true,
+          skills: true,
+          bio: true,
+          social_links: true,
+          created_at: true
+        }
+      });
+      if (!member) {
+        return res.status(404).json({ message: "Member not found" });
+      }
+      return res.json(member);
+    } catch (err) {
+      return res.status(500).json({ message: "Unable to fetch member" });
+    }
+  },
+  getLeaderById: async (req, res) => {
+    const { id } = req.params;
+    try {
+      const leader = await prisma.leader.findUnique({
+        where: { id: Number(id) },
+        select: {
+          id: true,
+          login_id: true,
+          name: true,
+          description: true,
+          team_role: true,
+          profile_photo_url: true,
+          email: true,
+          phone: true,
+          branch: true,
+          year: true,
+          college: true,
+          skills: true,
+          bio: true,
+          social_links: true,
+          created_at: true
+        }
+      });
+      if (!leader) {
+        return res.status(404).json({ message: "Leader not found" });
+      }
+      return res.json(leader);
+    } catch (err) {
+      return res.status(500).json({ message: "Unable to fetch leader" });
+    }
+  },
   getMembers: (req, res) => listUsers("members", req, res),
   createMember: (req, res) => createUser("members", req, res),
   deleteMember: (req, res) => deleteUser("members", req, res),

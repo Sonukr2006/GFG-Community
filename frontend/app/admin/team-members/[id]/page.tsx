@@ -1,13 +1,13 @@
 import DashboardShell from "@/components/DashboardShell";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import TeamMemberProfileView from "@/components/TeamMemberProfileView";
 import { adminNav } from "@/lib/nav";
-import TeamMembersManager from "@/components/dashboards/TeamMembersManager";
 
-export default function AdminTeamMembersPage() {
+export default function AdminTeamMemberProfilePage({ params }: { params: { id: string } }) {
   return (
     <ProtectedRoute role="admin">
       <DashboardShell title="Admin" items={adminNav}>
-        <TeamMembersManager profileBasePath="/admin/team-members" />
+        <TeamMemberProfileView memberId={params.id} backHref="/admin/team-members" />
       </DashboardShell>
     </ProtectedRoute>
   );

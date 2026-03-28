@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { createMember, deleteMember, getMembers, MemberInput, MemberItem } from "@/lib/api";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import Modal from "@/components/Modal";
+import MemberProfileView from "@/components/MemberProfileView";
 
 const emptyForm: MemberInput = {
   login_id: "",
@@ -12,13 +15,14 @@ const emptyForm: MemberInput = {
   team_role: "Technical"
 };
 
-export default function MembersManager() {
+export default function MembersManager({ profileBasePath = "/admin/members" }: { profileBasePath?: string }) {
   const [items, setItems] = useState<MemberItem[]>([]);
   const [form, setForm] = useState<MemberInput>(emptyForm);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [teamDropdownOpen, setTeamDropdownOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<{ id: number; name: string } | null>(null);
+  const [profileId, setProfileId] = useState<number | null>(null);
 
   const fetchList = async () => {
     setLoading(true);
@@ -172,12 +176,24 @@ export default function MembersManager() {
                     </p>
                   ) : null}
                 </div>
-                <button
-                  className="rounded-full border border-rose-400/40 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-rose-300"
-                  onClick={() => setConfirmDelete({ id: item.id, name: item.name })}
-                >
-                  Delete
-                </button>
+                <div className="flex flex-wrap gap-2">
+                  <Link
+                    href={`${profileBasePath}/${item.id}`}
+                    className="rounded-full border border-white/15 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white"
+                    onClick={(event) => {
+                      event.preventDefault();
+                      setProfileId(item.id);
+                    }}
+                  >
+                    Profile
+                  </Link>
+                  <button
+                    className="rounded-full border border-rose-400/40 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-rose-300"
+                    onClick={() => setConfirmDelete({ id: item.id, name: item.name })}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -196,6 +212,11 @@ export default function MembersManager() {
           setConfirmDelete(null);
         }}
       />
+      <Modal open={profileId !== null} onClose={() => setProfileId(null)}>
+        {profileId !== null ? (
+          <MemberProfileView memberId={profileId} showBack={false} title="Member Profile" />
+        ) : null}
+      </Modal>
     </div>
   );
 }

@@ -196,10 +196,14 @@ export type TeamMemberInput = {
   photo_url?: string;
 };
 
-export type TeamMemberItem = TeamMemberInput & { id: number };
+export type TeamMemberItem = TeamMemberInput & { id: number; created_at?: string };
 
 export function getTeamMembers() {
   return apiJson<TeamMemberItem[]>("/api/team-members");
+}
+
+export function getTeamMemberById(id: number | string) {
+  return apiJson<TeamMemberItem>(`/api/team-members/${id}`);
 }
 
 export function createTeamMember(payload: TeamMemberInput) {
@@ -379,6 +383,10 @@ export function getMembers() {
   return apiJson<MemberItem[]>("/api/members");
 }
 
+export function getMemberById(id: number | string) {
+  return apiJson<MemberItem>(`/api/members/${id}`);
+}
+
 export function createMember(payload: MemberInput) {
   return apiJson<MemberItem>("/api/members", {
     method: "POST",
@@ -394,6 +402,10 @@ export function deleteMember(id: number) {
 
 export function getLeaders() {
   return apiJson<MemberItem[]>("/api/leaders");
+}
+
+export function getLeaderById(id: number | string) {
+  return apiJson<MemberItem>(`/api/leaders/${id}`);
 }
 
 export function createLeader(payload: MemberInput) {

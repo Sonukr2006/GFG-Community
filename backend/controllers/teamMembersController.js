@@ -9,6 +9,21 @@ const getTeamMembers = async (req, res) => {
   }
 };
 
+const getTeamMemberById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const member = await prisma.teamMember.findUnique({
+      where: { id: Number(id) }
+    });
+    if (!member) {
+      return res.status(404).json({ message: "Team member not found" });
+    }
+    return res.json(member);
+  } catch (err) {
+    return res.status(500).json({ message: "Unable to fetch team member" });
+  }
+};
+
 const createTeamMember = async (req, res) => {
   const { name, description, role, skills, photo_url } = req.body;
 
@@ -59,4 +74,4 @@ const deleteTeamMember = async (req, res) => {
   }
 };
 
-module.exports = { getTeamMembers, createTeamMember, updateTeamMember, deleteTeamMember };
+module.exports = { getTeamMembers, getTeamMemberById, createTeamMember, updateTeamMember, deleteTeamMember };

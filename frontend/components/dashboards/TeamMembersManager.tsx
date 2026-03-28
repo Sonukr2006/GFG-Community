@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import {
   createTeamMember,
   deleteTeamMember,
@@ -11,6 +12,8 @@ import {
 } from "@/lib/api";
 import { authHeaders, getApiBase } from "@/lib/auth";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import Modal from "@/components/Modal";
+import TeamMemberProfileView from "@/components/TeamMemberProfileView";
 
 const emptyForm = {
   name: "",
@@ -20,7 +23,7 @@ const emptyForm = {
   photo_url: ""
 } as TeamMemberInput;
 
-export default function TeamMembersManager() {
+export default function TeamMembersManager({ profileBasePath }: { profileBasePath: string }) {
   const [items, setItems] = useState<TeamMemberItem[]>([]);
   const [form, setForm] = useState<TeamMemberInput>(emptyForm);
   const [skillsText, setSkillsText] = useState("");
@@ -30,6 +33,7 @@ export default function TeamMembersManager() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<{ id: number; name: string } | null>(null);
+  const [profileId, setProfileId] = useState<number | null>(null);
 
   const fetchList = async () => {
     setLoading(true);
@@ -230,7 +234,17 @@ export default function TeamMembersManager() {
                   <h3 className="text-lg font-semibold">{item.name}</h3>
                   <p className="text-sm text-slate-400">{item.role}</p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
+                  <Link
+                    href={`${profileBasePath}/${item.id}`}
+                    className="rounded-full border border-white/15 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white"
+                    onClick={(event) => {
+                      event.preventDefault();
+                      setProfileId(item.id);
+                    }}
+                  >
+                    Profile
+                  </Link>
                   <button
                     className="rounded-full border border-white/15 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white"
                     onClick={() => handleEdit(item)}
@@ -272,6 +286,11 @@ export default function TeamMembersManager() {
           setConfirmDelete(null);
         }}
       />
+      <Modal open={profileId !== null} onClose={() => setProfileId(null)}>
+        {profileId !== null ? (
+          <TeamMemberProfileView memberId={profileId} showBack={false} title="Team Member Profile" />
+        ) : null}
+      </Modal>
     </div>
   );
 }
