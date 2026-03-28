@@ -162,7 +162,7 @@ export type AnnouncementInput = {
   description: string;
 };
 
-export type AnnouncementItem = AnnouncementInput & { id: number };
+export type AnnouncementItem = AnnouncementInput & { id: number; created_at?: string };
 
 export function getAnnouncements() {
   return apiJson<AnnouncementItem[]>("/api/announcements");
