@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --surface: #0b0f17;
+  --surface-2: #111827;
+  --surface-3: #1f2937;
+  --text: #e5e7eb;
+  --muted: #9ca3af;
+  --accent: #22c55e;
+}
+
+.light {
+  color-scheme: light;
+  --surface: #f8fafc;
+  --surface-2: #ffffff;
+  --surface-3: #e2e8f0;
+  --text: #0f172a;
+  --muted: #475569;
+  --accent: #16a34a;
+}
+
+body {
+  @apply bg-[var(--surface)] text-[var(--text)] antialiased;
+  font-family: var(--font-display), system-ui, sans-serif;
+}
+
+::selection {
+  background: rgba(34, 197, 94, 0.35);
+}
+
+.glass {
+  background: rgba(17, 24, 39, 0.7);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  backdrop-filter: blur(14px);
+}
+
+.light .glass {
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.section-title {
+  @apply text-2xl md:text-3xl font-semibold tracking-tight;
+}
+
+.badge {
+  @apply inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-widest;
+}
+
+.card {
+  @apply rounded-2xl border border-white/10 bg-white/5 p-6 shadow-[0_20px_40px_-25px_rgba(34,197,94,0.4)];
+}
+
+.light .card {
+  @apply border-slate-200 bg-white shadow-[0_20px_40px_-25px_rgba(15,23,42,0.25)];
+}
+
+.input {
+  @apply w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-400 focus:border-neon-400 focus:outline-none focus:ring-2 focus:ring-neon-400/30;
+}
+
+.light .input {
+  @apply border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:ring-emerald-500/20;
+}

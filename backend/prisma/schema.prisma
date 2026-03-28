@@ -1,0 +1,155 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id            Int      @id @default(autoincrement())
+  login_id      String   @unique
+  name          String
+  description   String   @default("")
+  password_hash String
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  @@map("admins")
+}
+
+model Leader {
+  id            Int      @id @default(autoincrement())
+  login_id      String   @unique
+  name          String
+  description   String   @default("")
+  password_hash String
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  @@map("leaders")
+}
+
+model Member {
+  id            Int      @id @default(autoincrement())
+  login_id      String   @unique
+  name          String
+  description   String   @default("")
+  password_hash String
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  event_registrations    EventRegistration[]
+  workshop_registrations WorkshopRegistration[]
+
+  @@map("members")
+}
+
+model Event {
+  id                Int      @id @default(autoincrement())
+  title             String
+  description       String
+  start_date        DateTime
+  end_date          DateTime?
+  location          String?
+  registration_link String?
+  image_url         String?
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  registrations EventRegistration[]
+
+  @@map("events")
+}
+
+model Workshop {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  date        DateTime
+  level       String?
+  location    String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  registrations WorkshopRegistration[]
+
+  @@map("workshops")
+}
+
+model TeamMember {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  role        String
+  skills      String[]
+  photo_url   String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("team_members")
+}
+
+model Announcement {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("announcements")
+}
+
+model Resource {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  category    String
+  link        String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("resources")
+}
+
+model Gallery {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  image_url   String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("gallery")
+}
+
+model EventRegistration {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  event_id    Int
+  member_id   Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  event  Event  @relation(fields: [event_id], references: [id], onDelete: Cascade)
+  member Member @relation(fields: [member_id], references: [id], onDelete: Cascade)
+
+  @@map("event_registrations")
+}
+
+model WorkshopRegistration {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  workshop_id Int
+  member_id   Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  workshop Workshop @relation(fields: [workshop_id], references: [id], onDelete: Cascade)
+  member   Member   @relation(fields: [member_id], references: [id], onDelete: Cascade)
+
+  @@map("workshop_registrations")
+}
