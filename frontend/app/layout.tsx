@@ -1,5 +1,6 @@
 import "@/styles/globals.css";
 import { ReactNode } from "react";
+import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 
@@ -15,9 +16,14 @@ const mono = JetBrains_Mono({
   weight: ["400", "500", "600"]
 });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "GFG Community Platform",
-  description: "GeeksforGeeks campus community events, workshops, and resources"
+  description: "GeeksforGeeks campus community events, workshops, and resources",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg"
+  }
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
