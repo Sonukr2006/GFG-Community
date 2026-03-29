@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 720" role="img" aria-labelledby="title desc">
+  <title id="title">CGC University Campus Body logo</title>
+  <desc id="desc">Circular CGC University Campus Body emblem with green monogram and blue green ring.</desc>
+  <defs>
+    <linearGradient id="ring" x1="90" y1="120" x2="630" y2="600" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0E62C7"/>
+      <stop offset=".5" stop-color="#0FA1B3"/>
+      <stop offset="1" stop-color="#2E8E45"/>
+    </linearGradient>
+    <radialGradient id="plate" cx="0" cy="0" r="1" gradientTransform="translate(360 350) rotate(90) scale(290)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset=".8" stop-color="#F8FAFC"/>
+      <stop offset="1" stop-color="#E8EEF7"/>
+    </radialGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="28" stdDeviation="24" flood-color="#0F172A" flood-opacity=".18"/>
+    </filter>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+
+  <circle cx="360" cy="360" r="305" fill="url(#plate)" filter="url(#shadow)"/>
+  <circle cx="360" cy="360" r="322" fill="none" stroke="url(#ring)" stroke-width="18"/>
+  <circle cx="360" cy="360" r="291" fill="none" stroke="#FFFFFF" stroke-width="14"/>
+
+  <ellipse cx="360" cy="548" rx="175" ry="24" fill="#D6E1F0" opacity=".55" filter="url(#soft)"/>
+
+  <g fill="#0CA15A">
+    <path d="M241 228c19-19 44-29 73-29 59 0 104 45 109 112h-55c-4-35-26-57-54-57-18 0-34 7-47 22z"/>
+    <path d="M230 312h128v20H230z"/>
+    <path d="M230 332h55c4 35 26 57 54 57 29 0 51-22 55-57h55c-5 67-50 112-109 112-60 0-106-45-110-112z"/>
+    <path d="M493 228c-19-19-44-29-73-29-59 0-104 45-109 112h55c4-35 26-57 54-57 18 0 34 7 47 22z"/>
+    <path d="M366 312h128v20H366z"/>
+    <path d="M311 332c4 67 50 112 109 112 60 0 106-45 110-112h-55c-4 35-26 57-54 57-29 0-51-22-55-57z"/>
+  </g>
+
+  <g fill="#123A68" font-family="Arial, Helvetica, sans-serif" text-anchor="middle">
+    <text x="360" y="505" font-size="68" font-weight="700" letter-spacing=".5">CGC University</text>
+    <rect x="142" y="527" width="436" height="4" rx="2" fill="#123A68"/>
+    <text x="360" y="603" font-size="64" font-weight="500">Campus Body</text>
+  </g>
+
+  <g transform="translate(198 640)">
+    <rect x="0" y="-74" width="97" height="126" rx="10" fill="#E11D36"/>
+    <rect x="3" y="-71" width="91" height="120" rx="9" fill="none" stroke="#1D5FB8" stroke-width="4"/>
+    <text x="49" y="-8" fill="#FFFFFF" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="700" text-anchor="middle">CGC</text>
+    <path d="M16 18h66v22c-20 7-44 7-66 0z" fill="#1D5FB8"/>
+    <text x="49" y="36" fill="#FFFFFF" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" text-anchor="middle">UNIVERSITY</text>
+    <text x="116" y="-22" fill="#E11D36" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="700">CGC</text>
+    <text x="116" y="24" fill="#1D5FB8" font-family="Arial, Helvetica, sans-serif" font-size="47" font-weight="700">UNIVERSITY</text>
+    <text x="116" y="58" fill="#E11D36" font-family="Arial, Helvetica, sans-serif" font-size="33" font-weight="700">MOHALI</text>
+    <rect x="116" y="68" width="168" height="3" rx="1.5" fill="#1D5FB8"/>
+    <text x="116" y="95" fill="#1D5FB8" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700">Shaping Tomorrow,</text>
+    <text x="229" y="95" fill="#E11D36" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700">Today</text>
+  </g>
+</svg>

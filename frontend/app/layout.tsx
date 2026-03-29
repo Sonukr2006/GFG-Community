@@ -17,8 +17,8 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "GFG Community Platform",
-  description: "GeeksforGeeks campus community events, workshops, and resources",
+  title: "CGC University Campus Body",
+  description: "Campus body platform for CGC University events, workshops, announcements, and resources",
   icons: {
     icon: "/icon.svg",
     shortcut: "/icon.svg",

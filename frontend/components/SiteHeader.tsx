@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
 
@@ -8,19 +9,26 @@ const navLinks = [
   { href: "/announcements", label: "Announcements" },
   { href: "/resources", label: "Resources" },
   { href: "/gallery", label: "Gallery" },
-  { href: "/contact", label: "Contact" }
+  { href: "/contact", label: "Contact" },
 ];
 
 export default function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 bg-ink-900/80 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link href="/" className="flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-neon-500/10 text-lg font-bold text-neon-400">
-            GFG
-          </span>
+        <Link href="/" className="flex items-center gap-2">
+          <Image
+            src="/icon.svg"
+            alt="CGC University Campus Body"
+            width={45}
+            height={45}
+            unoptimized
+            className="h-12 w-12"
+          />
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-300">Community</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-300">
+              Community
+            </p>
             <p className="text-xs text-slate-400">CGCU Campus Hub</p>
           </div>
         </Link>

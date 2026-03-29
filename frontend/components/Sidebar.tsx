@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { LogOut } from "lucide-react";
 import { clearSession } from "@/lib/auth";
+import BrandLogo from "@/components/BrandLogo";
+import Image from "next/image";
 
 export type SidebarItem = {
   label: string;
@@ -23,8 +25,23 @@ export default function Sidebar({
   return (
     <aside className="flex min-h-screen w-64 flex-col border-r border-white/10 bg-ink-800 p-6">
       <div className="mb-8">
-        <p className="text-xs uppercase tracking-[0.2em] text-slate-400">{title}</p>
-        <h2 className="mt-2 text-lg font-semibold text-white">GFG Community</h2>
+        <Link href="/" className="flex items-center gap-2">
+          <Image
+            src="/icon.svg"
+            alt="CGC University Campus Body"
+            width={45}
+            height={45}
+            unoptimized
+            className="h-12 w-12"
+          />
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-300">
+              Community
+            </p>
+            <p className="text-xs text-slate-400">CGCU Campus Hub</p>
+          </div>
+        </Link>
+        
       </div>
       <nav className="flex-1 space-y-2 text-sm">
         {items.map((item) => {

@@ -20,6 +20,7 @@ export const leaderNav: SidebarItem[] = [
   { label: "Events", href: "/leader/events" },
   { label: "Workshops", href: "/leader/workshops" },
   { label: "Team Members", href: "/leader/team-members" },
+  { label: "Members", href: "/leader/members" },
   { label: "Announcements", href: "/leader/announcements" },
   { label: "Resources", href: "/leader/resources" },
   { label: "Gallery", href: "/leader/gallery" },

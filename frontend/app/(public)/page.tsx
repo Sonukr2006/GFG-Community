@@ -62,20 +62,20 @@ export default async function HomePage() {
         <div className="absolute inset-0 bg-grid-dark bg-[size:80px_80px] opacity-20" />
         <div className="relative mx-auto flex max-w-6xl flex-col gap-8 px-6 py-20 md:flex-row md:items-center">
           <div className="flex-1">
-            <p className="badge bg-neon-500/10 text-neon-400">GeeksforGeeks Campus Chapter</p>
+            <p className="badge bg-neon-500/10 text-neon-400">CGC University Campus Body</p>
             <h1 className="mt-6 text-4xl font-semibold leading-tight md:text-5xl">
               Build with peers, learn with mentors, and ship real-world tech.
             </h1>
             <p className="mt-6 max-w-xl text-base text-slate-300">
-              The GFG Community Platform is your single hub for events, workshops, announcements, and
-              curated resources. Stay in sync with your campus tech squad.
+              The CGC University Campus Body platform is your single hub for events, workshops,
+              announcements, and curated resources. Stay in sync with your campus community.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
               <Link
                 href="/member-login"
                 className="rounded-full bg-neon-500 px-6 py-3 text-sm font-semibold uppercase tracking-widest text-ink-900"
               >
-                Join Community
+                Join Campus Body
               </Link>
               <Link
                 href="/events"

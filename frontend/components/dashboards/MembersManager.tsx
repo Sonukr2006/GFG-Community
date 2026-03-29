@@ -15,7 +15,13 @@ const emptyForm: MemberInput = {
   team_role: "Technical"
 };
 
-export default function MembersManager({ profileBasePath = "/admin/members" }: { profileBasePath?: string }) {
+export default function MembersManager({
+  profileBasePath = "/admin/members",
+  canDelete = true
+}: {
+  profileBasePath?: string;
+  canDelete?: boolean;
+}) {
   const [items, setItems] = useState<MemberItem[]>([]);
   const [form, setForm] = useState<MemberInput>(emptyForm);
   const [loading, setLoading] = useState(false);
@@ -187,31 +193,35 @@ export default function MembersManager({ profileBasePath = "/admin/members" }: {
                   >
                     Profile
                   </Link>
-                  <button
-                    className="rounded-full border border-rose-400/40 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-rose-300"
-                    onClick={() => setConfirmDelete({ id: item.id, name: item.name })}
-                  >
-                    Delete
-                  </button>
+                  {canDelete ? (
+                    <button
+                      className="rounded-full border border-rose-400/40 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-rose-300"
+                      onClick={() => setConfirmDelete({ id: item.id, name: item.name })}
+                    >
+                      Delete
+                    </button>
+                  ) : null}
                 </div>
               </div>
             </div>
           ))}
         </div>
       </div>
-      <ConfirmDialog
-        open={Boolean(confirmDelete)}
-        title={confirmDelete ? `Delete member \"${confirmDelete.name}\"?` : "Delete member?"}
-        description="This action cannot be undone."
-        confirmText="Delete Member"
-        onCancel={() => setConfirmDelete(null)}
-        onConfirm={() => {
-          if (confirmDelete) {
-            handleDelete(confirmDelete.id);
-          }
-          setConfirmDelete(null);
-        }}
-      />
+      {canDelete ? (
+        <ConfirmDialog
+          open={Boolean(confirmDelete)}
+          title={confirmDelete ? `Delete member \"${confirmDelete.name}\"?` : "Delete member?"}
+          description="This action cannot be undone."
+          confirmText="Delete Member"
+          onCancel={() => setConfirmDelete(null)}
+          onConfirm={() => {
+            if (confirmDelete) {
+              handleDelete(confirmDelete.id);
+            }
+            setConfirmDelete(null);
+          }}
+        />
+      ) : null}
       <Modal open={profileId !== null} onClose={() => setProfileId(null)}>
         {profileId !== null ? (
           <MemberProfileView memberId={profileId} showBack={false} title="Member Profile" />
