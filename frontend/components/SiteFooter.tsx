@@ -1,5 +1,4 @@
 import Link from "next/link";
-import BrandLogo from "@/components/BrandLogo";
 import Image from "next/image";
 
 export default function SiteFooter() {
@@ -8,21 +7,21 @@ export default function SiteFooter() {
       <div className="mx-auto grid max-w-6xl gap-8 px-6 py-10 md:grid-cols-3">
         <div>
           <Link href="/" className="flex items-center gap-2">
-                    <Image
-                      src="/icon.svg"
-                      alt="CGC University Campus Body"
-                      width={45}
-                      height={45}
-                      unoptimized
-                      className="h-12 w-12"
-                    />
-                    <div>
-                      <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-300">
-                        Community
-                      </p>
-                      <p className="text-xs text-slate-400">CGCU Campus Hub</p>
-                    </div>
-                  </Link>
+            <Image
+              src="/icon.svg"
+              alt="CGC University Campus Body"
+              width={45}
+              height={45}
+              unoptimized
+              className="h-12 w-12"
+            />
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-300">
+                Community
+              </p>
+              <p className="text-xs text-slate-400">CGCU Campus Hub</p>
+            </div>
+          </Link>
 
           <p className="mt-3 text-sm text-slate-400">
             A unified campus hub for events, workshops, announcements, and student-led initiatives.

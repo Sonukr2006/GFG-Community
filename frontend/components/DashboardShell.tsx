@@ -14,9 +14,9 @@ export default function DashboardShell({
 }) {
   return (
     <div className="min-h-screen bg-ink-900">
-      <div className="flex">
+      <div className="lg:flex">
         <Sidebar title={title} items={items} />
-        <main className="flex-1 px-6 py-8">
+        <main className="flex-1 px-4 py-5 sm:px-6 sm:py-8">
           <div className="mx-auto max-w-6xl">
             <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-stretch">
               <div className="flex-1 rounded-2xl border border-white/10 bg-white/5 p-4">
