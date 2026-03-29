@@ -83,9 +83,9 @@ export default function ContactPage() {
               Follow updates, workshop recaps, and upcoming sessions on our socials.
             </p>
             <div className="mt-6 grid gap-3 text-sm text-slate-300">
-              <p>LinkedIn: linkedin.com/company/gfg-campus</p>
-              <p>Instagram: @gfg_campus</p>
-              <p>Email: gfg-community@campus.edu</p>
+              <p>LinkedIn: https://www.linkedin.com/in/geeksforgeeks-cgc-university-mohali-0630a63a8/</p>
+              <p>Instagram: https://www.instagram.com/gfg_campus_body/</p>
+              <p>Email:  gfg.cgcu.campusbody@gmail.com</p>
             </div>
           </div>
         </div>
