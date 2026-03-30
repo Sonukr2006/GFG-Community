@@ -17,15 +17,19 @@ const emptyForm: MemberInput = {
 
 export default function MembersManager({
   profileBasePath = "/admin/members",
-  canDelete = true
+  canDelete = true,
+  canCreate = true
 }: {
   profileBasePath?: string;
   canDelete?: boolean;
+  canCreate?: boolean;
 }) {
   const [items, setItems] = useState<MemberItem[]>([]);
   const [form, setForm] = useState<MemberInput>(emptyForm);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   const [teamDropdownOpen, setTeamDropdownOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<{ id: number; name: string } | null>(null);
   const [profileId, setProfileId] = useState<number | null>(null);
@@ -50,118 +54,125 @@ export default function MembersManager({
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
-
-    const tempId = Date.now();
-    const optimistic: MemberItem = {
-      id: tempId,
-      login_id: form.login_id,
-      name: form.name,
-      description: form.description || "",
-      team_role: form.team_role || "General",
-      created_at: new Date().toISOString()
-    };
-
-    setItems((prev) => [optimistic, ...prev]);
-    setForm(emptyForm);
+    setSubmitting(true);
 
     try {
       const created = await createMember(form);
-      setItems((prev) => prev.map((item) => (item.id === tempId ? created : item)));
+      setItems((prev) => [created, ...prev]);
+      setForm(emptyForm);
+      setTeamDropdownOpen(false);
     } catch (err) {
-      setItems((prev) => prev.filter((item) => item.id !== tempId));
       setError(err instanceof Error ? err.message : "Create failed");
+    } finally {
+      setSubmitting(false);
     }
   };
 
   const handleDelete = async (id: number) => {
+    setError(null);
     const previous = items;
+    setDeletingId(id);
     setItems((prev) => prev.filter((item) => item.id !== id));
     try {
       await deleteMember(id);
     } catch (err) {
       setItems(previous);
       setError(err instanceof Error ? err.message : "Delete failed");
+    } finally {
+      setDeletingId(null);
     }
   };
 
   return (
     <div className="grid gap-8">
-      <div className="card">
-        <h2 className="text-xl font-semibold">Create Member Account</h2>
-        <form onSubmit={handleSubmit} className="mt-6 grid gap-4 md:grid-cols-2">
-          <input
-            className="input"
-            placeholder="Login ID"
-            value={form.login_id}
-            onChange={(event) => setForm({ ...form, login_id: event.target.value })}
-            required
-          />
-          <input
-            className="input"
-            placeholder="Name"
-            value={form.name}
-            onChange={(event) => setForm({ ...form, name: event.target.value })}
-            required
-          />
-          <input
-            className="input"
-            placeholder="Description"
-            value={form.description}
-            onChange={(event) => setForm({ ...form, description: event.target.value })}
-          />
-          <div className="relative">
-            <label className="text-xs uppercase tracking-widest text-slate-400">Team Role</label>
+      {error ? (
+        <p className="whitespace-pre-wrap rounded-2xl border border-rose-400/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-300">
+          {error}
+        </p>
+      ) : null}
+      {canCreate ? (
+        <div className="card">
+          <h2 className="text-xl font-semibold">Create Member Account</h2>
+          <form onSubmit={handleSubmit} className="mt-6 grid gap-4 md:grid-cols-2">
+            <input
+              className="input"
+              placeholder="Login ID"
+              value={form.login_id}
+              onChange={(event) => setForm({ ...form, login_id: event.target.value })}
+              required
+              disabled={submitting}
+            />
+            <input
+              className="input"
+              placeholder="Name"
+              value={form.name}
+              onChange={(event) => setForm({ ...form, name: event.target.value })}
+              required
+              disabled={submitting}
+            />
+            <input
+              className="input"
+              placeholder="Description"
+              value={form.description}
+              onChange={(event) => setForm({ ...form, description: event.target.value })}
+              disabled={submitting}
+            />
+            <div className="relative">
+              <label className="text-xs uppercase tracking-widest text-slate-400">Team Role</label>
+              <button
+                type="button"
+                className="input mt-2 flex w-full items-center justify-between bg-ink-900 text-slate-200 disabled:cursor-not-allowed disabled:opacity-60"
+                onClick={() => setTeamDropdownOpen((prev) => !prev)}
+                disabled={submitting}
+              >
+                <span>{form.team_role || "Select team"}</span>
+                <span className="text-xs text-slate-400">▼</span>
+              </button>
+              {teamDropdownOpen ? (
+                <div className="absolute left-0 right-0 z-20 mt-2 rounded-2xl border border-white/10 bg-ink-900/95 p-2 shadow-2xl backdrop-blur">
+                  {[
+                    "Technical",
+                    "Management",
+                    "PR",
+                    "Design",
+                    "Social Media",
+                    "General"
+                  ].map((role) => (
+                    <button
+                      key={role}
+                      type="button"
+                      className="w-full rounded-xl px-3 py-2 text-left text-sm text-slate-200 transition hover:bg-white/10"
+                      onMouseDown={(event) => {
+                        event.preventDefault();
+                        setForm({ ...form, team_role: role });
+                        setTeamDropdownOpen(false);
+                      }}
+                    >
+                      {role === "PR" ? "PR Team" : role === "General" ? "General" : `${role} Team`}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+            <input
+              type="password"
+              className="input"
+              placeholder="Password"
+              value={form.password}
+              onChange={(event) => setForm({ ...form, password: event.target.value })}
+              required
+              disabled={submitting}
+            />
             <button
-              type="button"
-              className="input mt-2 flex w-full items-center justify-between bg-ink-900 text-slate-200"
-              onClick={() => setTeamDropdownOpen((prev) => !prev)}
+              type="submit"
+              className="rounded-full bg-neon-500 px-5 py-2 text-xs font-semibold uppercase tracking-widest text-ink-900 disabled:cursor-not-allowed disabled:opacity-60"
+              disabled={submitting}
             >
-              <span>{form.team_role || "Select team"}</span>
-              <span className="text-xs text-slate-400">▼</span>
+              {submitting ? "Creating..." : "Create Member"}
             </button>
-            {teamDropdownOpen ? (
-              <div className="absolute left-0 right-0 z-20 mt-2 rounded-2xl border border-white/10 bg-ink-900/95 p-2 shadow-2xl backdrop-blur">
-                {[
-                  "Technical",
-                  "Management",
-                  "PR",
-                  "Design",
-                  "Social Media",
-                  "General"
-                ].map((role) => (
-                  <button
-                    key={role}
-                    type="button"
-                    className="w-full rounded-xl px-3 py-2 text-left text-sm text-slate-200 transition hover:bg-white/10"
-                    onMouseDown={(event) => {
-                      event.preventDefault();
-                      setForm({ ...form, team_role: role });
-                      setTeamDropdownOpen(false);
-                    }}
-                  >
-                    {role === "PR" ? "PR Team" : role === "General" ? "General" : `${role} Team`}
-                  </button>
-                ))}
-              </div>
-            ) : null}
-          </div>
-          <input
-            type="password"
-            className="input"
-            placeholder="Password"
-            value={form.password}
-            onChange={(event) => setForm({ ...form, password: event.target.value })}
-            required
-          />
-          <button
-            type="submit"
-            className="rounded-full bg-neon-500 px-5 py-2 text-xs font-semibold uppercase tracking-widest text-ink-900"
-          >
-            Create Member
-          </button>
-        </form>
-        {error ? <p className="mt-4 text-sm text-rose-400">{error}</p> : null}
-      </div>
+          </form>
+        </div>
+      ) : null}
 
       <div className="card">
         <h2 className="text-xl font-semibold">Members</h2>
@@ -196,9 +207,10 @@ export default function MembersManager({
                   {canDelete ? (
                     <button
                       className="rounded-full border border-rose-400/40 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-rose-300"
+                      disabled={deletingId === item.id}
                       onClick={() => setConfirmDelete({ id: item.id, name: item.name })}
                     >
-                      Delete
+                      {deletingId === item.id ? "Deleting..." : "Delete"}
                     </button>
                   ) : null}
                 </div>

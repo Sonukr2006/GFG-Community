@@ -7,7 +7,7 @@ export default function LeaderMembersPage() {
   return (
     <ProtectedRoute role="leader">
       <DashboardShell title="Leader" items={leaderNav}>
-        <MembersManager profileBasePath="/leader/members" canDelete={false} />
+        <MembersManager profileBasePath="/leader/members" canDelete={false} canCreate={false} />
       </DashboardShell>
     </ProtectedRoute>
   );

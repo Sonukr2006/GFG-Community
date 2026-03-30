@@ -1,6 +1,36 @@
 const bcrypt = require("bcryptjs");
 const prisma = require("../config/prisma");
 
+const getEntityLabel = (table) => (table === "leaders" ? "Leader" : "Member");
+
+const getCreateErrorMessage = (table, err, loginId) => {
+  const entityLabel = getEntityLabel(table);
+
+  if (err?.code === "P2002") {
+    return `${entityLabel} login ID "${loginId}" already exists. Please use a different login ID.`;
+  }
+
+  return `Unable to create ${entityLabel.toLowerCase()}. Please try again.`;
+};
+
+const getDeleteErrorMessage = (table, err, relatedTaskCount) => {
+  const entityLabel = getEntityLabel(table);
+
+  if (err?.code === "P2025") {
+    return `${entityLabel} not found.`;
+  }
+
+  if (table === "members" && err?.code === "P2003") {
+    const taskText =
+      relatedTaskCount > 0
+        ? ` ${relatedTaskCount} task${relatedTaskCount === 1 ? " is" : "s are"} still assigned to this member.`
+        : "";
+    return `Cannot delete this member because it is linked to existing records.${taskText} Remove or reassign those tasks first.`;
+  }
+
+  return `Unable to delete ${entityLabel.toLowerCase()}. Please try again.`;
+};
+
 const createUser = async (table, req, res) => {
   const { login_id, name, description, password, team_role } = req.body;
 
@@ -38,7 +68,9 @@ const createUser = async (table, req, res) => {
       created_at: created.created_at
     });
   } catch (err) {
-    return res.status(500).json({ message: "Unable to create user" });
+    console.error(`Create ${table} failed:`, err);
+    const status = err?.code === "P2002" ? 409 : 500;
+    return res.status(status).json({ message: getCreateErrorMessage(table, err, login_id) });
   }
 };
 
@@ -63,16 +95,28 @@ const listUsers = async (table, req, res) => {
 
 const deleteUser = async (table, req, res) => {
   const { id } = req.params;
+  const numericId = Number(id);
+
+  if (Number.isNaN(numericId)) {
+    return res.status(400).json({ message: "Invalid user id." });
+  }
+
   try {
     if (table === "members") {
-      await prisma.member.delete({ where: { id: Number(id) } });
+      await prisma.member.delete({ where: { id: numericId } });
     }
     if (table === "leaders") {
-      await prisma.leader.delete({ where: { id: Number(id) } });
+      await prisma.leader.delete({ where: { id: numericId } });
     }
     return res.json({ message: "User deleted" });
   } catch (err) {
-    return res.status(500).json({ message: "Unable to delete user" });
+    console.error(`Delete ${table} failed:`, err);
+    const relatedTaskCount =
+      table === "members"
+        ? await prisma.task.count({ where: { assigned_member_id: numericId } }).catch(() => 0)
+        : 0;
+    const status = err?.code === "P2025" ? 404 : err?.code === "P2003" ? 409 : 500;
+    return res.status(status).json({ message: getDeleteErrorMessage(table, err, relatedTaskCount) });
   }
 };
 

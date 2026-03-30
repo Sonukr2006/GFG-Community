@@ -34,16 +34,35 @@ requiredEnvs.forEach((key) => {
 
 app.set("trust proxy", 1);
 
-const corsOrigins = process.env.CORS_ORIGIN
-  ? process.env.CORS_ORIGIN.split(",").map((origin) => origin.trim())
-  : ["http://localhost:3000"];
+const defaultCorsOrigins = ["http://localhost:3000", "https://gfg-community.vercel.app"];
+const configuredCorsOrigins = (process.env.CORS_ORIGIN || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+const corsOrigins = [...new Set([...defaultCorsOrigins, ...configuredCorsOrigins])];
 
-app.use(
-  cors({
-    origin: corsOrigins,
-    credentials: true
-  })
-);
+const vercelPreviewPattern = /^https:\/\/[a-zA-Z0-9-]+\.vercel\.app$/;
+
+const corsOptions = {
+  origin(origin, callback) {
+    // Allow server-to-server requests and non-browser tools without an Origin header.
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    if (corsOrigins.includes(origin) || vercelPreviewPattern.test(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error(`Origin ${origin} not allowed by CORS`));
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(
