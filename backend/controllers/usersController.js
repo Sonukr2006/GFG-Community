@@ -103,7 +103,19 @@ const deleteUser = async (table, req, res) => {
 
   try {
     if (table === "members") {
-      await prisma.member.delete({ where: { id: numericId } });
+      const deletedTaskCount = await prisma.$transaction(async (tx) => {
+        const { count } = await tx.task.deleteMany({
+          where: { assigned_member_id: numericId }
+        });
+
+        await tx.member.delete({ where: { id: numericId } });
+        return count;
+      });
+
+      return res.json({
+        message: "User deleted",
+        deletedTasks: deletedTaskCount
+      });
     }
     if (table === "leaders") {
       await prisma.leader.delete({ where: { id: numericId } });
